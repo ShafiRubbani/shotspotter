@@ -4,8 +4,9 @@ library(gganimate)
 library(janitor)
 library(tigris)
 library(sf)
+library(lubridate)
 
-springfield <- read_csv("http://justicetechlab.org/wp-content/uploads/2019/04/springfield_ma.csv",
+raw_springfield <- read_csv("http://justicetechlab.org/wp-content/uploads/2019/04/springfield_ma.csv",
                         col_names = TRUE,
                         col_types = cols(
                           Date = col_character(),
@@ -13,5 +14,10 @@ springfield <- read_csv("http://justicetechlab.org/wp-content/uploads/2019/04/sp
                           Latitude = col_character(),
                           Longitude = col_double(),
                           `Incident Type` = col_character()
-                        ))%>% mutate(Latitude = as.numeric(gsub("[^0-9.-]", "", Latitude)))%>%
-  filter(!is.na(Latitude))
+                        )) %>% 
+  clean_names()
+
+springfield <- raw_springfield %>% 
+  mutate(latitude = as.numeric(gsub("[^0-9.-]", "", latitude))) %>%
+  filter(!is.na(latitude)) %>% 
+  mutate(date = mdy(date))
