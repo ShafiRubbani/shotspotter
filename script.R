@@ -13,4 +13,5 @@ springfield <- read_csv("http://justicetechlab.org/wp-content/uploads/2019/04/sp
                           Latitude = col_character(),
                           Longitude = col_double(),
                           `Incident Type` = col_character()
-                        ))
+                        ))%>% mutate(Latitude = as.numeric(gsub("[^0-9.-]", "", Latitude)))%>%
+  filter(!is.na(Latitude))
