@@ -20,4 +20,22 @@ raw_springfield <- read_csv("http://justicetechlab.org/wp-content/uploads/2019/0
 springfield <- raw_springfield %>% 
   mutate(latitude = as.numeric(gsub("[^0-9.-]", "", latitude))) %>%
   filter(!is.na(latitude)) %>% 
-  mutate(date = mdy(date))
+  mutate(date = mdy(date))%>%
+  mutate(latitude = case_when(latitude = 42125 ~ 42.125,
+                              latitude = 42122 ~ 42.122,
+                              latitude = 42116 ~ 42.116,
+                              latitude = 42108 ~ 42.116,
+                              latitude = 42102 ~ 42.102,
+                              latitude = 42101 ~ 42.101,
+                              latitude = 42098 ~ 42.098,
+                              latitude = 4209 ~ 42.090))
+springfield2<-springfield%>%
+  filter(latitude<45)
+
+
+
+
+mutate(ager = case_when(ager == "18 to 34" ~ 26, 
+                        ager == "35 to 49" ~ 42, 
+                        ager == "50 to 64" ~ 57, 
+                        ager == "65 and older"~ 75))
