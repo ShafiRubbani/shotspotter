@@ -74,10 +74,11 @@ server <- function(input, output) {
 washington_shapes <- raw_shape %>%
     filter(str_detect(NAME10, "Washington, DC--VA--MD"))
 
-gunshot_locations<- reactive({-washington_locations%>%filter(hour == input$hour)})
+gunshot_locations<- reactive({washington_locations%>%filter(hour == input$hour)})
 
   output$shotPlot <- renderPlot({
-    ggplot(data = washington_shapes)+ geom_sf()
+    ggplot(data = washington_shapes)+ geom_sf()+
+      geom_sf(data = gunshot_locations(), aes(group = input$hour, alpha= 0.2))
   })
    
 }
