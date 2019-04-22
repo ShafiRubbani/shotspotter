@@ -53,7 +53,8 @@ ui <- fluidPage(
       
       # Show a plot of the generated distribution
       mainPanel(
-         plotOutput("shotPlot")
+        plotOutput("shotPlot"),
+        textOutput("message")
       )
    )
 )
@@ -70,15 +71,23 @@ server <- function(input, output) {
                                    crs = 4326)
   
   
-washington_shapes <- raw_shape %>%
+  washington_shapes <- raw_shape %>%
     filter(str_detect(NAME10, "Washington, DC--VA--MD"))
 
-gunshot_locations<- reactive({washington_locations%>%filter(hour == input$hour)})
+  gunshot_locations<- reactive({washington_locations%>%filter(hour == input$hour)})
 
   output$shotPlot <- renderPlot({
-    ggplot(data = washington_shapes)+ geom_sf()+
-      geom_sf(data = gunshot_locations(), aes(group = input$hour, alpha= 0.2))
+    ggplot() +
+      geom_sf(data = washington_shapes) +
+      geom_sf(data = gunshot_locations(), aes(color = numshots), alpha = 0.2) +
+      theme_map()
   })
+  
+  output$message <- renderText("This project was a collaboration between Diego Martinez 
+                    and Shafi Rubbani. Our code can be found at 
+                    https://github.com/ShafiRubbani/shotspotter. We give thanks to
+                    Justice Tech Lab for their excellent work on the 
+                    ShotSpotter project: http://justicetechlab.org/shotspotter-data/.")
    
 }
 
