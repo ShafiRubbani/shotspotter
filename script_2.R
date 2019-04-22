@@ -12,7 +12,8 @@ library(gganimate)
 raw_shape<- urban_areas(class = "sf")
 
 
-shapes<-raw_shape%>% filter(NAME10 == "Springfield, MA--CT")
+shapes2<-raw_shape%>%filter(str_detect(NAME10, "Washington, DC--VA--MD"))
+
 
 springfield2<-springfield2%>%filter(!is.na(latitude), !is.na(longitude))
 
@@ -22,4 +23,4 @@ springfield_locations <- st_as_sf(springfield2,
                                   crs = 4326) 
 
 
-ggplot(data= shapes)+ geom_sf()+geom_sf(data = springfield_locations)
+ggplot(data= shapes2)+ geom_sf()
