@@ -15,7 +15,7 @@ raw_shape<- urban_areas(class = "sf")
 shapes2<-raw_shape%>%filter(str_detect(NAME10, "Washington, DC--VA--MD"))
 
 
-springfield2<-springfield2%>%filter(!is.na(latitude), !is.na(longitude))
+washington<-raw_washington_dc%>%filter(latitude>30, longitude< -70)
 
 
 springfield_locations <- st_as_sf(springfield2, 
