@@ -9,18 +9,22 @@ library(gifski)
 library(png) 
 library(gganimate)
 
-raw_shape<- urban_areas(class = "sf")
+urban_shapes <- urban_areas(class = "sf")
 
+washington_shapes <- raw_shape %>%
+  filter(str_detect(NAME10, "Washington, DC--VA--MD"))
 
-shapes2<-raw_shape%>%filter(str_detect(NAME10, "Washington, DC--VA--MD"))
+washington <- raw_washington_dc %>%
+  filter(latitude > 30, longitude < -70) %>% 
+  filter(year > 2014)
 
-
-washington<-raw_washington_dc%>%filter(latitude>30, longitude< -70)
-
-
-springfield_locations <- st_as_sf(springfield2, 
+washington_locations <- st_as_sf(washington, 
                                   coords = c("longitude", "latitude"), 
-                                  crs = 4326) 
+                                  crs = 4326)
 
+ggplot(data = washington_shapes) + 
+  geom_sf()
 
-ggplot(data= shapes2)+ geom_sf()
+ggplot() +
+  geom_sf(data = shapes2) +
+  geom_sf(data = washington_locations)

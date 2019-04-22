@@ -23,6 +23,10 @@ raw_washington_dc <- read_csv("http://justicetechlab.org/wp-content/uploads/2018
                               )) %>% 
   clean_names()
 
+download.file("http://justicetechlab.org/wp-content/uploads/2018/05/washington_dc_2006to2017.csv",
+              destfile = "./Shotspotter/washington_dc_2006to2017.csv",
+              mode = "w")
+
 # washington_dc <- raw_washington_dc %>% 
 #   mutate(latitude = as.numeric(gsub("[^0-9.-]", "", latitude))) %>%
 #   filter(!is.na(latitude)) %>%
