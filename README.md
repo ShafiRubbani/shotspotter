@@ -1,3 +1,3 @@
 # shotspotter
 
-[Link to Shiny App]("https://diego-martinez21.shinyapps.io/Shotspotter/ ")
+[Link to Shiny App]("https://shafi-rubbani.shinyapps.io/Shotspotter/ ")
