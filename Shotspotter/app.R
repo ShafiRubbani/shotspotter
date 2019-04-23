@@ -9,8 +9,9 @@
 
 library(shiny)
 library(sf)
+library(tigris)
+library(janitor)
 library(ggplot2)
-library(lubridate)
 library(ggthemes)
 library(tidyverse)
 
@@ -33,7 +34,7 @@ raw_washington_dc <- read_csv("washington_dc_2006to2017.csv",
 
 urban_shapes <- urban_areas(class = "sf")
 
-washington_shapes <- raw_shape %>%
+washington_shapes <- urban_shapes %>%
   filter(str_detect(NAME10, "Washington, DC--VA--MD"))
 
 # Define UI for application that draws a histogram
@@ -52,10 +53,11 @@ ui <- fluidPage(
                      value = 12)
       ),
       
-      # Show a plot of the generated distribution
       mainPanel(
-        plotOutput("shotPlot"),
-        textOutput("message")
+        tabsetPanel(type = "tabs",
+                    tabPanel("Plot", plotOutput("shotPlot")),
+                    tabPanel("About", textOutput("message"))
+        )
       )
    )
 )
@@ -63,17 +65,13 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
   
-  washington_dc <-raw_washington_dc %>%
+  washington_dc <- raw_washington_dc %>%
     filter(latitude > 30, longitude < -70) %>% 
     filter(year > 2014)
   
   washington_locations <- st_as_sf(washington_dc, 
                                    coords = c("longitude", "latitude"), 
                                    crs = 4326)
-  
-  
-  washington_shapes <- raw_shape %>%
-    filter(str_detect(NAME10, "Washington, DC--VA--MD"))
 
   gunshot_locations<- reactive({washington_locations%>%filter(hour == input$hour)})
 
@@ -81,6 +79,7 @@ server <- function(input, output) {
     ggplot() +
       geom_sf(data = washington_shapes) +
       geom_sf(data = gunshot_locations(), aes(color = numshots), alpha = 0.2) +
+      coord_sf(xlim = c(-77.11979522, -76.867218), ylim = c(38.79164435, 39.031386)) +
       theme_map()
   })
   
