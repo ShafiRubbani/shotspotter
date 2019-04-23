@@ -164,7 +164,8 @@ server <- function(input, output) {
   output$animated_graph <- renderImage({
     list(src = "gunshots.gif",
          contentType = 'image/gif')
-  })
+  },
+  deleteFile = FALSE)
   
   #creates about page where we give thanks and share our repo.
   
