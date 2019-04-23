@@ -14,6 +14,7 @@ library(janitor)
 library(ggplot2)
 library(ggthemes)
 library(tidyverse)
+library(gt)
 
 raw_washington_dc <- read_csv("washington_dc_2006to2017.csv",
                               col_names = TRUE,
@@ -55,7 +56,9 @@ ui <- fluidPage(
       
       mainPanel(
         tabsetPanel(type = "tabs",
-                    tabPanel("Plot", plotOutput("shotPlot")),
+                    tabPanel("Plot", plotOutput("shotPlot"),
+                             tableOutput("table")),
+                    tabPanel("Total Gunshots", plotOutput("linePlot")),
                     tabPanel("About", textOutput("message"))
         )
       )
@@ -80,8 +83,38 @@ server <- function(input, output) {
       geom_sf(data = washington_shapes) +
       geom_sf(data = gunshot_locations(), aes(color = numshots), alpha = 0.2) +
       coord_sf(xlim = c(-77.11979522, -76.867218), ylim = c(38.79164435, 39.031386)) +
+      labs(color = "Number of Shots")+
       theme_map()
   })
+  
+  output$table<- render_gt({gunshot_locations()%>%
+      filter(!is.na(type))%>%
+      mutate(types = fct_collapse(type, "Single"="Single_Gunshot",
+                                          "Multiple"="Multiple_Gunshots",
+                                          "Gunshot or Firecracker" ="Gunshot_or_Firecracker"),
+             types = fct_relevel(types, "Single", "Multiple", "Gunshot or Firecracker"))%>%
+      group_by(types)%>%
+      count(types)%>%
+      ungroup()%>%
+      mutate(total = sum(n), percentage = n/total)%>%
+      select(types, percentage)%>%
+      gt()%>%
+      fmt_percent(columns = vars(percentage), decimals = 1)%>%
+      cols_label(types = "Type of Gunshot",
+                 percentage = "Percentage") 
+})
+
+output$linePlot<- renderPlot({washington_dc%>% filter(!is.na(numshots))%>%
+    group_by(hour)%>%
+    mutate(total_shots = sum(numshots))%>%
+    ggplot(aes(x=hour, y=total_shots))+geom_line(col = "red")+
+    scale_x_continuous(breaks = seq(0,23,1))+
+    scale_y_continuous(breaks = seq(0,8000,1000))+
+    labs(x="Hour", y= "Total Gunshots", 
+         title= "Total Number of Gunshots by Hour in Washington, DC",
+         subtitle = "The Amount of Gunshots Spike During the Late Hours of the Night")+theme_fivethirtyeight()
+  
+})
   
   output$message <- renderText("This project was a collaboration between Diego Martinez 
                     and Shafi Rubbani. Our code can be found at 
