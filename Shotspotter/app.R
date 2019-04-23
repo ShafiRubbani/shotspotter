@@ -49,7 +49,9 @@ washington_shapes <- urban_shapes %>%
 
 # Define UI for ShotSpotter App
 
-ui <- fluidPage(
+ui <- fluidPage(tabsetPanel(
+  
+  tabPanel("Map",
    
    # Application title
   
@@ -70,15 +72,14 @@ ui <- fluidPage(
     # the distribution of gunshots by hour, and an about page
       
       mainPanel(
-        tabsetPanel(type = "tabs",
-                    tabPanel("Plot", plotOutput("shotPlot"),
-                             tableOutput("table")),
-                    tabPanel("Total Gunshots", plotOutput("linePlot")),
-                    tabPanel("About", textOutput("message"))
-        )
-      )
-    )
-)
+        plotOutput("shotPlot"),
+        tableOutput("table")
+        ))
+),
+tabPanel("Total Gunshots", plotOutput("linePlot")),
+tabPanel("About", textOutput("message")
+)))
+
 
 # Define server logic
 
