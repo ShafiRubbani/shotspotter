@@ -58,3 +58,4 @@ raw_washington_dc %>%
   # Enables to access the gif in the shiny app. 
 
 anim_save("./Shotspotter/gunshots.gif", animation = last_animation())
+
