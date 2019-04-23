@@ -27,25 +27,25 @@ raw_washington_dc <- read_csv("http://justicetechlab.org/wp-content/uploads/2018
                               )) %>% 
   clean_names()%>%
   
-  #few points with very different latitudes and longitudes that would distort
-  #map if not removed
+  # A few points with very different latitudes and longitudes that would distort
+  # map are removed
   
   filter(latitude > 30, longitude < -70) %>% 
   
-  #very large dataset and plotting each point on geom_sf takes a long
-  #time,decided to only use data going back to 2014
+  # This is a very large dataset and plotting each point on geom_sf takes a long
+  # time, so we decided to only use data going back to 2014
   
   filter(year > 2014)
 
-#converts original dataset into an sf. we now have the capability to graph
-#gunshot locations on the map of D.C.
+  # Converts original dataset into an sf. We now have the capability to graph
+  # gunshot locations on the map of D.C.
 
 washington_locations <- st_as_sf(raw_washington_dc, 
                                  coords = c("longitude", "latitude"), 
                                  crs = 4326)
 
-#writing a shape file. Instead of doing all of this in the shiny app server, we
-#thought it would save processing time to rather create a file that we can read
-#in and impliment directly into the shiny app.
+# Writing a shape file. Instead of doing all of this in the shiny app server, we
+# thought it would save processing time and create a file that we can read
+# in and impliment directly into the Shiny app.
 
 st_write(washington_locations, dsn = "./Shotspotter/washington_locations.shp")
